@@ -1,6 +1,7 @@
 import { Color, PerspectiveCamera, Scene, Vector3, WebGLRenderer, Clock, ShadowMapType, PCFSoftShadowMap, SpotLight, SphereBufferGeometry, MeshStandardMaterial, Mesh, PlaneBufferGeometry, CameraHelper, DirectionalLight } from 'three';
 import { Brick } from './brick';
 import { Bus } from './bus';
+import { loader } from './loader';
 
 
 export class App {
@@ -11,11 +12,17 @@ export class App {
     canvas: document.getElementById('main-canvas') as HTMLCanvasElement,
   });
   private readonly time = new Clock(true);
+  private readonly loader = new loader();
 
   private ground: Brick;
   private bus: Bus
 
   constructor() {
+
+    this.renderer.setSize(innerWidth, innerHeight);
+    this.renderer.setClearColor(new Color('rgb(0,0,0)'));
+    this.renderer.shadowMap.enabled = true;
+
     this.ground = new Brick(300, 10, 20, new Color('rgb(255,0,0)'));
     this.bus = new Bus(20, 10, 10, new Color('#FFD800'))
     this.bus.translateY(10)
@@ -27,9 +34,6 @@ export class App {
     this.camera.position.set(0, 100, 200);
     this.camera.lookAt(new Vector3(0, 0, 0));
 
-    this.renderer.setSize(innerWidth, innerHeight);
-    this.renderer.setClearColor(new Color('rgb(0,0,0)'));
-
     const color = 0xFFFFFF;
     const intensity = 1;
     const light = new DirectionalLight(color, intensity);
@@ -38,6 +42,8 @@ export class App {
     this.scene.add(light);
     this.scene.add(light.target);
 
+
+    var bus = this.loader.load('content/schoolbus.glb')
     this.render();
   }
 

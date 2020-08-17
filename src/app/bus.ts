@@ -1,4 +1,4 @@
-import { BoxGeometry, Color, Mesh, MeshBasicMaterial, SpotLight, MeshPhongMaterial, CameraHelper } from 'three';
+import { BoxGeometry, Color, Mesh, MeshBasicMaterial, SpotLight, MeshPhongMaterial, CameraHelper, MeshLambertMaterial, SpotLightHelper } from 'three';
 
 export class Bus extends Mesh {
 
@@ -6,7 +6,7 @@ export class Bus extends Mesh {
   constructor(sizeX: number, sizeY: number, sizeZ: number, color: Color) {
     super();
     this.geometry = new BoxGeometry(sizeX, sizeY, sizeZ);
-    this.material = new MeshPhongMaterial({ color });
+    this.material = new MeshLambertMaterial({ color });
     this.castShadow = true;
     this.receiveShadow = true
     this.createHeadlights()
@@ -15,8 +15,10 @@ export class Bus extends Mesh {
   createHeadlights() {
     // white spotlight shining from the side, casting a shadow
 
-    var spotLight = new SpotLight(0xffffff);
-    spotLight.position.set(10, 10, 10);
+    var spotLight = new SpotLight('#FFD800');
+    var spotLightHelper = new SpotLightHelper(spotLight);
+    spotLight.add(spotLightHelper)
+    spotLight.matrixAutoUpdate = false
 
     spotLight.castShadow = true;
 
@@ -27,8 +29,6 @@ export class Bus extends Mesh {
     spotLight.shadow.camera.far = 4000;
     spotLight.shadow.camera.fov = 30;
 
-    var helper = new CameraHelper(spotLight.shadow.camera);
     this.add(spotLight);
-    this.add(helper);
   }
 }
