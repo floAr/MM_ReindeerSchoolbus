@@ -1,16 +1,20 @@
-import { Color, PerspectiveCamera, Scene, Vector3, WebGLRenderer, Clock, ShadowMapType, PCFSoftShadowMap, SpotLight, SphereBufferGeometry, MeshStandardMaterial, Mesh, PlaneBufferGeometry, CameraHelper, DirectionalLight, Group, Euler } from 'three';
+import { Color, PerspectiveCamera, Scene, Vector3, WebGLRenderer, Clock, ShadowMapType, PCFSoftShadowMap, SpotLight, SphereBufferGeometry, MeshStandardMaterial, Mesh, PlaneBufferGeometry, CameraHelper, DirectionalLight, Group, Euler, HemisphereLight, AmbientLight, ShaderLib, DirectionalLightHelper, ReinhardToneMapping } from 'three';
 import { Brick } from './brick';
 import { Bus } from './bus';
-import  loader  from './loader';
+import loader from './loader';
 import * as planck from 'planck-js'
 
 
+
+
 export class App {
+
+  private canvas = document.getElementById('main-canvas') as HTMLCanvasElement;
   private readonly scene = new Scene();
   private readonly camera = new PerspectiveCamera(50, innerWidth / innerHeight, 0.1, 10000);
   private readonly renderer = new WebGLRenderer({
     antialias: true,
-    canvas: document.getElementById('main-canvas') as HTMLCanvasElement,
+    canvas: this.canvas
   });
   private readonly time = new Clock(true);
 
@@ -18,40 +22,91 @@ export class App {
   private ground: Brick;
   private bus: Bus
 
-private gtlfBus:Group
+  private light: DirectionalLight
+
 
   constructor() {
 
 
     this.renderer.setSize(innerWidth, innerHeight);
-    this.renderer.setClearColor(new Color('rgb(0,0,0)'));
+    this.renderer.setClearColor(new Color('rgb(112,112,112)'));
     this.renderer.shadowMap.enabled = true;
+    this.renderer.gammaFactor = 2.2
 
-    this.ground = new Brick(300, 10, 20, new Color('rgb(255,0,0)'));
-    this.bus = new Bus(20, 10, 10, new Color('#FFD800'))
-    this.gtlfBus = new Group()
-    this.bus.translateY(10)
+    this.renderer.toneMapping = ReinhardToneMapping
+    this.renderer.toneMappingExposure = 1.0
+
+    this.ground = new Brick(300, 10, 50, new Color('rgb(80,120,120)'));
+    this.bus = new Bus(20, 10, 10, new Color('#FFFFFF'))
+
+    this.bus.translateY(5)
     this.scene.add(this.ground);
     this.scene.add(this.bus);
 
     this.time.start();
 
-    this.camera.position.set(0, 200, 200);
+    this.camera.position.set(0, 10, 20);
     this.camera.lookAt(new Vector3(0, 0, 0));
 
-    const color = 0xFFFFFF;
-    const intensity = 1;
-    const light = new DirectionalLight(color, intensity);
-    light.position.set(0, 10, 0);
-    light.target.position.set(-5, 0, 0);
-    this.scene.add(light);
-    this.scene.add(light.target);
+    // const color = '#ffffff';
+    // const intensity = 5;
+    // const light = new DirectionalLight(color, intensity);
+    // light.castShadow=true;
+    // light.position.set(0, 100, 0);
+    // light.target.position.set(0,0,0)
+    // this.scene.add(light);
+    // //   this.scene.add(light.target);
+    //this.scene.add(hemiLight);
+
+    // var light2 = new DirectionalLight(0xffffff,4);
+    // light2.position.set(10, 150, 25);
 
 
+    // this.bus.add(light2);
+
+
+    this.light = new DirectionalLight('#ffffff', 15);
+    this.light.position.set(10, 20, 20);
+
+    // this.light.castShadow = true;
+    // this.light.shadowCameraRight = 50;
+    //  this.light.shadowCameraLeft = -50;
+    // this.light.shadowCameraTop = 50;
+    // this.light.shadowCameraBottom = -50;
+
+    // this.light.shadow.bias = 0.0001;
+    // this.light.shadow.radius = 10;
+    // this.light.shadow.mapSize.width = 1024 * 4;
+    // this.light.shadow.mapSize.height = 1024 * 4;
+    this.scene.add(this.light);
+    console.log(this)
+
+    const elem = document.querySelector('#button');
+    elem?.addEventListener('click', () => {
+      // canvas.toBlob((blob) => {
+      //   saveBlob(blob, `screencapture-${canvas.width}x${canvas.height}.png`);
+      // });
+      this.bus.setSegmentCount()
+    });
 
 
     this.render();
   }
+
+  private onDocumentKeyDown(event: KeyboardEvent) {
+    console.log('keyevent');
+    var func = (event: KeyboardEvent) => {
+      var keyCode = event.which;
+      if (keyCode == 39) {
+        console.log('plus' + this)
+        this.bus.setSegmentCount()
+
+      } else if (keyCode == 37) {
+        console.log('minus')
+      }
+    }
+    func(event)
+  };
 
   private adjustCanvasSize() {
     this.renderer.setSize(innerWidth, innerHeight);
@@ -65,9 +120,11 @@ private gtlfBus:Group
     this.bus.translateX((Math.sin(this.time.getElapsedTime())))
 
 
-    this.camera.lookAt(this.gtlfBus.position);
+    this.camera.lookAt(this.bus.position);
 
-    var anim = ((Math.sin(this.time.getElapsedTime())))
+    //  this.light.lookAt(this.bus.position)
+    //  this.light.updateMatrix()
+    //  var anim = ((Math.sin(this.time.getElapsedTime())))
 
     this.adjustCanvasSize();
   }

@@ -3,40 +3,52 @@ import loader from './loader';
 
 export class Bus extends Mesh {
 
-  private gtlfNode: Group = new Group()
+  public segmentLength: number = 4
+
+  private gtlfCentralPart: Group = new Group()
+  private gtlfBackPart: Group = new Group()
 
   constructor(sizeX: number, sizeY: number, sizeZ: number, color: Color) {
     super();
 
-    this.castShadow = true;
-    this.receiveShadow = true
-    loader.load('content/schoolbus.glb', (gtlfLoaded => {
-      this.add(gtlfLoaded)
-      this.gtlfNode = gtlfLoaded
-      // this.gtlfNode.position.set(0,0,0)
-      this.gtlfNode.scale.set(5, 5, 5)
-      this.gtlfNode.rotateY(-1.570796)
 
+    loader.load('content/front.glb', (gtlfLoaded => {
+      gtlfLoaded.rotateY(-1.570796)
+      this.add(gtlfLoaded)
+
+    }))
+    loader.load('content/center.glb', (gtlfLoaded => {
+      gtlfLoaded.rotateY(-1.570796)
+      this.gtlfCentralPart = gtlfLoaded;
+      loader.load('content/back.glb', (gtlfLoaded => {
+        gtlfLoaded.rotateY(-1.570796)
+        this.gtlfBackPart = gtlfLoaded;
+        this.calcSegments()
+      }))
     }))
   }
 
-  createHeadlights() {
-    // white spotlight shining from the side, casting a shadow
+  public setSegmentCount() {
+    // clean up old children
+    this.children = this.children.slice(0, 1)
+    this.gtlfBackPart.translateZ(-(this.segmentLength - 1))
 
-    var spotLight = new SpotLight('#FFD800');
-    var spotLightHelper = new SpotLightHelper(spotLight);
-    spotLight.add(spotLightHelper)
-    spotLight.matrixAutoUpdate = false
 
-    spotLight.castShadow = true;
+    // change segment count
+this.segmentLength+=1
 
-    spotLight.shadow.mapSize.width = 1024;
-    spotLight.shadow.mapSize.height = 1024;
+    // rebuild bus
+    this.calcSegments();
+  }
 
-    spotLight.shadow.camera.near = 500;
-    spotLight.shadow.camera.far = 4000;
-    spotLight.shadow.camera.fov = 30;
+  private calcSegments() {
 
-    this.add(spotLight);
+    for (let parts = 0; parts < this.segmentLength; parts++) {
+      var part = this.gtlfCentralPart.clone(true);
+      part.translateZ(parts)
+      this.add(part)
+    }
+    this.gtlfBackPart.translateZ(this.segmentLength - 1)
+    this.add(this.gtlfBackPart)
   }
 }
