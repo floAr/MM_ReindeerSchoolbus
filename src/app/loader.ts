@@ -1,5 +1,6 @@
-import { GLTFLoader }  from 'three/examples/jsm/loaders/GLTFLoader';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { AnimationMixer } from 'three/src/animation/AnimationMixer';
+import { Scene } from 'three';
 
 
 export class loader {
@@ -15,7 +16,7 @@ export class loader {
   // var dracoLoader = new DRACOLoader();
   // dracoLoader.setDecoderPath( '/examples/js/libs/draco/' );
   // loader.setDRACOLoader( dracoLoader );
-  public load(path: string) {
+  public load(path: string, scene: Scene) {
 
     this.loader.load(
       // resource URL
@@ -23,13 +24,12 @@ export class loader {
       // called when the resource is loaded
       function (gltf) {
 
-
+        scene.add(gltf.scene)
         gltf.animations; // Array<THREE.AnimationClip>
         gltf.scene; // THREE.Group
         gltf.scenes; // Array<THREE.Group>
         gltf.cameras; // Array<THREE.Camera>
         gltf.asset; // Object
-        return gltf
       },
       // called while loading is progressing
       function (xhr) {

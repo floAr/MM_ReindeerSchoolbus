@@ -2,6 +2,7 @@ import { Color, PerspectiveCamera, Scene, Vector3, WebGLRenderer, Clock, ShadowM
 import { Brick } from './brick';
 import { Bus } from './bus';
 import { loader } from './loader';
+import * as planck from 'planck-js'
 
 
 export class App {
@@ -14,10 +15,14 @@ export class App {
   private readonly time = new Clock(true);
   private readonly loader = new loader();
 
+
   private ground: Brick;
   private bus: Bus
 
+
+
   constructor() {
+
 
     this.renderer.setSize(innerWidth, innerHeight);
     this.renderer.setClearColor(new Color('rgb(0,0,0)'));
@@ -43,7 +48,8 @@ export class App {
     this.scene.add(light.target);
 
 
-    var bus = this.loader.load('content/schoolbus.glb')
+    this.loader.load('content/schoolbus.glb',this.scene)
+
     this.render();
   }
 

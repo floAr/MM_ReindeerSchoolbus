@@ -1,5 +1,8 @@
 const path = require('path')
 
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const HtmlWebpackExternalsPlugin = require("html-webpack-externals-plugin");
+
 module.exports = {
   mode: 'development',
   entry: './src/main.ts',
@@ -23,5 +26,19 @@ module.exports = {
   },
   watchOptions: {
     ignored: /node_modules/
-  }
+  },
+  plugins: [
+    new HtmlWebpackPlugin(),
+    new HtmlWebpackExternalsPlugin({
+      externals: [
+        {
+          module: "planck-js",
+          entry: "dist/planck.min.js", //needed to change this
+          global: "planck",
+          supplements: ["dist/planck.min.js.map"],
+        },
+      ],
+
+    }),
+  ],
 }
