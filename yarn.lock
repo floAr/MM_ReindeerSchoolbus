@@ -2498,6 +2498,11 @@ pkg-dir@^3.0.0:
   dependencies:
     find-up "^3.0.0"
 
+planck-js@^0.3.21:
+  version "0.3.21"
+  resolved "https://registry.yarnpkg.com/planck-js/-/planck-js-0.3.21.tgz#84532169d579ce82cb089ca430deac761ef3cd94"
+  integrity sha512-7Eq9mmja7O8uZrYNoUoj1Jr/Rh+pqRKjfl0ckBjLkKI2WclySsZOd/8gWBBBlOeY9IacKz3FgqjZy7OoKT+WzQ==
+
 portfinder@^1.0.26:
   version "1.0.26"
   resolved "https://registry.yarnpkg.com/portfinder/-/portfinder-1.0.26.tgz#475658d56ca30bed72ac7f1378ed350bd1b64e70"
