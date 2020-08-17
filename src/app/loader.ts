@@ -1,9 +1,9 @@
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { AnimationMixer } from 'three/src/animation/AnimationMixer';
-import { Scene } from 'three';
+import { Scene, Group } from 'three';
 
 
-export class loader {
+export class loaderClass {
   // Instantiate a loader
   readonly loader = new GLTFLoader()
 
@@ -16,15 +16,15 @@ export class loader {
   // var dracoLoader = new DRACOLoader();
   // dracoLoader.setDecoderPath( '/examples/js/libs/draco/' );
   // loader.setDRACOLoader( dracoLoader );
-  public load(path: string, scene: Scene) {
+  public load(path: string, onLoadedCB : (loaded:Group) => void) {
 
     this.loader.load(
       // resource URL
-      'models/gltf/duck/duck.gltf',
+      path,
       // called when the resource is loaded
       function (gltf) {
 
-        scene.add(gltf.scene)
+        onLoadedCB(gltf.scene)
         gltf.animations; // Array<THREE.AnimationClip>
         gltf.scene; // THREE.Group
         gltf.scenes; // Array<THREE.Group>
@@ -46,3 +46,7 @@ export class loader {
     );
   }
 }
+
+const loader = new loaderClass();
+
+export default loader

@@ -1,7 +1,7 @@
-import { Color, PerspectiveCamera, Scene, Vector3, WebGLRenderer, Clock, ShadowMapType, PCFSoftShadowMap, SpotLight, SphereBufferGeometry, MeshStandardMaterial, Mesh, PlaneBufferGeometry, CameraHelper, DirectionalLight } from 'three';
+import { Color, PerspectiveCamera, Scene, Vector3, WebGLRenderer, Clock, ShadowMapType, PCFSoftShadowMap, SpotLight, SphereBufferGeometry, MeshStandardMaterial, Mesh, PlaneBufferGeometry, CameraHelper, DirectionalLight, Group, Euler } from 'three';
 import { Brick } from './brick';
 import { Bus } from './bus';
-import { loader } from './loader';
+import  loader  from './loader';
 import * as planck from 'planck-js'
 
 
@@ -13,13 +13,12 @@ export class App {
     canvas: document.getElementById('main-canvas') as HTMLCanvasElement,
   });
   private readonly time = new Clock(true);
-  private readonly loader = new loader();
 
 
   private ground: Brick;
   private bus: Bus
 
-
+private gtlfBus:Group
 
   constructor() {
 
@@ -30,13 +29,14 @@ export class App {
 
     this.ground = new Brick(300, 10, 20, new Color('rgb(255,0,0)'));
     this.bus = new Bus(20, 10, 10, new Color('#FFD800'))
+    this.gtlfBus = new Group()
     this.bus.translateY(10)
     this.scene.add(this.ground);
     this.scene.add(this.bus);
 
     this.time.start();
 
-    this.camera.position.set(0, 100, 200);
+    this.camera.position.set(0, 200, 200);
     this.camera.lookAt(new Vector3(0, 0, 0));
 
     const color = 0xFFFFFF;
@@ -48,7 +48,7 @@ export class App {
     this.scene.add(light.target);
 
 
-    this.loader.load('content/schoolbus.glb',this.scene)
+
 
     this.render();
   }
@@ -65,7 +65,10 @@ export class App {
     this.bus.translateX((Math.sin(this.time.getElapsedTime())))
 
 
-    this.camera.lookAt(this.bus.position);
+    this.camera.lookAt(this.gtlfBus.position);
+
+    var anim = ((Math.sin(this.time.getElapsedTime())))
+
     this.adjustCanvasSize();
   }
 
