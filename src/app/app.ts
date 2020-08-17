@@ -1,5 +1,7 @@
-import { Color, PerspectiveCamera, Scene, Vector3, WebGLRenderer, Clock } from 'three';
+import { Color, PerspectiveCamera, Scene, Vector3, WebGLRenderer, Clock, ShadowMapType, PCFSoftShadowMap, SpotLight, SphereBufferGeometry, MeshStandardMaterial, Mesh, PlaneBufferGeometry, CameraHelper, DirectionalLight } from 'three';
 import { Brick } from './brick';
+import { Bus } from './bus';
+
 
 export class App {
   private readonly scene = new Scene();
@@ -11,11 +13,11 @@ export class App {
   private readonly time = new Clock(true);
 
   private ground: Brick;
-  private bus: Brick
+  private bus: Bus
 
   constructor() {
-    this.ground = new Brick(300,10,20, new Color('rgb(255,0,0)'));
-    this.bus = new Brick(20,10,10, new Color('#FFD800'))
+    this.ground = new Brick(300, 10, 20, new Color('rgb(255,0,0)'));
+    this.bus = new Bus(20, 10, 10, new Color('#FFD800'))
     this.bus.translateY(10)
     this.scene.add(this.ground);
     this.scene.add(this.bus);
@@ -27,6 +29,14 @@ export class App {
 
     this.renderer.setSize(innerWidth, innerHeight);
     this.renderer.setClearColor(new Color('rgb(0,0,0)'));
+
+    const color = 0xFFFFFF;
+    const intensity = 1;
+    const light = new DirectionalLight(color, intensity);
+    light.position.set(0, 10, 0);
+    light.target.position.set(-5, 0, 0);
+    this.scene.add(light);
+    this.scene.add(light.target);
 
     this.render();
   }
@@ -46,4 +56,6 @@ export class App {
     this.camera.lookAt(this.bus.position);
     this.adjustCanvasSize();
   }
+
+
 }
