@@ -1,6 +1,6 @@
 import { BoxGeometry, Color, Mesh, MeshBasicMaterial } from 'three';
 
-export class Brick extends Mesh {
+export class Bus extends Mesh {
 
 
   constructor(sizeX: number,sizeY: number,sizeZ: number, color: Color) {

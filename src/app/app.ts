@@ -1,21 +1,28 @@
-import { Color, PerspectiveCamera, Scene, Vector3, WebGLRenderer } from 'three';
+import { Color, PerspectiveCamera, Scene, Vector3, WebGLRenderer, Clock } from 'three';
 import { Brick } from './brick';
 
 export class App {
   private readonly scene = new Scene();
-  private readonly camera = new PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 10000);
+  private readonly camera = new PerspectiveCamera(50, innerWidth / innerHeight, 0.1, 10000);
   private readonly renderer = new WebGLRenderer({
     antialias: true,
     canvas: document.getElementById('main-canvas') as HTMLCanvasElement,
   });
+  private readonly time = new Clock(true);
 
-  private brick: Brick;
+  private ground: Brick;
+  private bus: Brick
 
   constructor() {
-    this.brick = new Brick(100, new Color('rgb(255,0,0)'));
-    this.scene.add(this.brick);
+    this.ground = new Brick(300,10,20, new Color('rgb(255,0,0)'));
+    this.bus = new Brick(20,10,10, new Color('#FFD800'))
+    this.bus.translateY(10)
+    this.scene.add(this.ground);
+    this.scene.add(this.bus);
 
-    this.camera.position.set(200, 200, 200);
+    this.time.start();
+
+    this.camera.position.set(0, 100, 200);
     this.camera.lookAt(new Vector3(0, 0, 0));
 
     this.renderer.setSize(innerWidth, innerHeight);
@@ -33,8 +40,10 @@ export class App {
   private render() {
     this.renderer.render(this.scene, this.camera);
     requestAnimationFrame(() => this.render());
+    this.bus.translateX((Math.sin(this.time.getElapsedTime())))
 
+
+    this.camera.lookAt(this.bus.position);
     this.adjustCanvasSize();
-    this.brick.rotateY(0.03);
   }
 }
