@@ -128,15 +128,20 @@ export class App {
     this.bus.translateX((Math.sin(this.time.getElapsedTime())))
 
     // Move camera and Light here
-    var cameraTargetPos = new Vector3(this.bus.position.x + this.cameraOffset.x, this.bus.position.y + this.cameraOffset.y, this.bus.position.z + this.cameraOffset.z)
-    this.camera.position.set(cameraTargetPos.x, cameraTargetPos.y, cameraTargetPos.z)
-    this.camera.lookAt(this.bus.position);
+this.lerpCamera()
 
     var lightTargetPos = new Vector3(this.bus.position.x + this.lightOffset.x, this.bus.position.y + this.lightOffset.y, this.bus.position.z + this.lightOffset.z)
     this.light.position.set(lightTargetPos.x, lightTargetPos.y, lightTargetPos.z)
     this.light.target.position.set(this.bus.position.x, this.bus.position.y, this.bus.position.z)
 
     this.adjustCanvasSize();
+  }
+
+  private lerpCamera(){
+    var cameraTargetPos = new Vector3(this.bus.position.x + this.cameraOffset.x, this.bus.position.y + this.cameraOffset.y, this.bus.position.z + this.cameraOffset.z)
+    cameraTargetPos = cameraTargetPos.lerp(this.camera.position,0.975)
+    this.camera.position.set(cameraTargetPos.x, cameraTargetPos.y, cameraTargetPos.z)
+    this.camera.lookAt(this.bus.position);
   }
 
 
