@@ -45,8 +45,8 @@ export class loaderClass {
 
         gltf.scene.traverse(function (child) {
           if (child instanceof Mesh) {
-          //    let mesh = (child as Mesh)
-          //   //  mesh.castShadow=true
+              let mesh = (child as Mesh)
+            mesh.castShadow=true
           //   //  mesh.receiveShadow=true
           //    let mat = mesh.material as MeshStandardMaterial
           //   let toonMat = new MeshLambertMaterial();
