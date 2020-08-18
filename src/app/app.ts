@@ -18,6 +18,8 @@ export class App {
   });
   private readonly time = new Clock(true);
 
+  private readonly cameraOffset: Vector3 = new Vector3(0, 50, 100)
+  private readonly lightOffset: Vector3 = new Vector3(10, 20, 20)
 
   private ground: Brick;
   private bus: Bus
@@ -31,7 +33,7 @@ export class App {
     this.renderer.setSize(innerWidth, innerHeight);
     this.renderer.setClearColor(new Color('rgb(112,112,112)'));
     this.renderer.shadowMap.enabled = true;
-    this.renderer.gammaFactor = 2.2
+
 
     this.renderer.toneMapping = ReinhardToneMapping
     this.renderer.toneMappingExposure = 1.0
@@ -45,7 +47,7 @@ export class App {
 
     this.time.start();
 
-    this.camera.position.set(0, 10, 20);
+    this.camera.position.set(this.cameraOffset.x, this.cameraOffset.y, this.cameraOffset.z);
     this.camera.lookAt(new Vector3(0, 0, 0));
 
     // const color = '#ffffff';
@@ -66,20 +68,23 @@ export class App {
 
 
     this.light = new DirectionalLight('#ffffff', 15);
-    this.light.position.set(10, 20, 20);
+    this.light.position.set(this.lightOffset.x, this.lightOffset.y, this.lightOffset.z);
 
-    // this.light.castShadow = true;
-    // this.light.shadowCameraRight = 50;
-    //  this.light.shadowCameraLeft = -50;
-    // this.light.shadowCameraTop = 50;
-    // this.light.shadowCameraBottom = -50;
+    this.light.castShadow = true;
+    this.light.shadow.camera.right = 50;
+    this.light.shadow.camera.left = -50;
+    this.light.shadow.camera.top = 50;
+    this.light.shadow.camera.bottom = -50;
 
-    // this.light.shadow.bias = 0.0001;
-    // this.light.shadow.radius = 10;
-    // this.light.shadow.mapSize.width = 1024 * 4;
-    // this.light.shadow.mapSize.height = 1024 * 4;
+    this.light.shadow.bias = 0.0001;
+    this.light.shadow.radius = 10;
+    this.light.shadow.mapSize.width = 1024 * 4;
+    this.light.shadow.mapSize.height = 1024 * 4;
     this.scene.add(this.light);
-    console.log(this)
+    this.scene.add(this.light.target)
+    var helper = new CameraHelper(this.light.shadow.camera)
+    this.scene.add(helper)
+
 
     const elem = document.querySelector('#button');
     elem?.addEventListener('click', () => {
@@ -89,6 +94,8 @@ export class App {
       this.bus.setSegmentCount()
     });
 
+    this.canvas.addEventListener('keydown',this.onDocumentKeyDown)
+
 
     this.render();
   }
@@ -96,13 +103,12 @@ export class App {
   private onDocumentKeyDown(event: KeyboardEvent) {
     console.log('keyevent');
     var func = (event: KeyboardEvent) => {
-      var keyCode = event.which;
-      if (keyCode == 39) {
+      var keyCode = event.key;
+      console.log(keyCode)
+      if (keyCode == '+') {
         console.log('plus' + this)
         this.bus.setSegmentCount()
 
-      } else if (keyCode == 37) {
-        console.log('minus')
       }
     }
     func(event)
@@ -117,14 +123,18 @@ export class App {
   private render() {
     this.renderer.render(this.scene, this.camera);
     requestAnimationFrame(() => this.render());
+
+    // Move bus here
     this.bus.translateX((Math.sin(this.time.getElapsedTime())))
 
-
+    // Move camera and Light here
+    var cameraTargetPos = new Vector3(this.bus.position.x + this.cameraOffset.x, this.bus.position.y + this.cameraOffset.y, this.bus.position.z + this.cameraOffset.z)
+    this.camera.position.set(cameraTargetPos.x, cameraTargetPos.y, cameraTargetPos.z)
     this.camera.lookAt(this.bus.position);
 
-    //  this.light.lookAt(this.bus.position)
-    //  this.light.updateMatrix()
-    //  var anim = ((Math.sin(this.time.getElapsedTime())))
+    var lightTargetPos = new Vector3(this.bus.position.x + this.lightOffset.x, this.bus.position.y + this.lightOffset.y, this.bus.position.z + this.lightOffset.z)
+    this.light.position.set(lightTargetPos.x, lightTargetPos.y, lightTargetPos.z)
+    this.light.target.position.set(this.bus.position.x, this.bus.position.y, this.bus.position.z)
 
     this.adjustCanvasSize();
   }
