@@ -1,10 +1,10 @@
-import { Color, PerspectiveCamera, Scene, Vector3, WebGLRenderer, Clock, ShadowMapType, PCFSoftShadowMap, SpotLight, SphereBufferGeometry, MeshStandardMaterial, Mesh, PlaneBufferGeometry, CameraHelper, DirectionalLight, Group, Euler, HemisphereLight, AmbientLight, ShaderLib, DirectionalLightHelper, ReinhardToneMapping, Quaternion, BoxHelper, BoxGeometry, MeshBasicMaterial, CannonDebugRenderer } from 'three';
+import { Color, PerspectiveCamera, Scene, Vector3, WebGLRenderer, Clock, Mesh, CameraHelper, DirectionalLight, Euler, ReinhardToneMapping, Quaternion, BoxHelper, BoxGeometry } from 'three';
 import { Brick } from './brick';
 import { Bus } from './bus';
-import loader from './loader';
 import * as C from 'cannon'
 import { Stage } from './stage';
 import { PhysicalMesh } from './physicalMesh';
+import { CannonDebugRenderer } from './CannonDebugRenderer';
 
 export class App {
 
@@ -15,20 +15,20 @@ export class App {
     canvas: this.canvas
   });
   private readonly time = new Clock(true);
-  
+
   private camera! : PerspectiveCamera
   private readonly cameraOffset: Vector3 = new Vector3(0, 50, 100)
   private readonly lightOffset: Vector3 = new Vector3(10, 20, 20)
 
   private bus: Bus
-  private stage: Stage
   private light!: DirectionalLight
-  private cube: PhysicalMesh
   private box: BoxHelper
 
   private world: C.World
   private busMat: C.Material
   private stageMat: C.Material
+  cdr: CannonDebugRenderer;
+  onDocumentKeyDown: (event: KeyboardEvent) => void;
 
   setCamera() {
     this.camera = new PerspectiveCamera(50, innerWidth / innerHeight, 0.1, 10000);
@@ -77,7 +77,7 @@ export class App {
     ground.translateY(-5)
     ground.setRotationFromEuler(new Euler(0,0,0.3))
     this.scene.add(ground);
-    
+
     var ground2 = new Brick(40, 2, 20, new Color('rgb(255,255,255)'));
     ground2.translateX(30)
     ground2.translateY(-12)
@@ -99,7 +99,7 @@ export class App {
     groundBody.addShape(new C.Box(new C.Vec3(60,2,20).scale(0.5)), new C.Vec3(95,-18,0), new C.Quaternion().setFromEuler(0,0,0))
 
     this.world.addBody(groundBody)
-    
+
 
     // Contact
     const contactMat = new C.ContactMaterial(this.busMat,this.stageMat,{
@@ -160,13 +160,13 @@ export class App {
     this.world.solver.iterations = 5;
 
     this.scene = new Scene()
-    
+
     this.setCamera();
     this.setRenderer();
     this.addObjects()
     this.setLight();
 
-    // this.cdr = new THREE.CannonDebugRenderer(this.scene, this.world)
+   // this.cdr = new CannonDebugRenderer(this.scene, this.world)
     this.time.start();
 
     // const color = '#ffffff';
@@ -194,24 +194,21 @@ export class App {
       this.bus.setSegmentCount()
     });
 
-    this.canvas.addEventListener('keydown',this.onDocumentKeyDown)
+    this.onDocumentKeyDown=(event: KeyboardEvent) =>{
+        var keyCode = event.key;
+        console.log(keyCode)
+        if (keyCode == '+') {
+          console.log('plus' + this)
+          this.bus.setSegmentCount()
+        }
+      }
 
+    document.addEventListener("keydown", this.onDocumentKeyDown, false);
     this.render();
   }
 
-  private onDocumentKeyDown(event: KeyboardEvent) {
-    console.log('keyevent');
-    var func = (event: KeyboardEvent) => {
-      var keyCode = event.key;
-      console.log(keyCode)
-      if (keyCode == '+') {
-        console.log('plus' + this)
-        this.bus.setSegmentCount()
 
-      }
-    }
-    func(event)
-  };
+
 
   private adjustCanvasSize() {
     this.renderer.setSize(innerWidth, innerHeight);
