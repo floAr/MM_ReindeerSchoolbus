@@ -1,21 +1,22 @@
-import { BoxGeometry, Color, Mesh, MeshBasicMaterial, SpotLight, MeshPhongMaterial, CameraHelper, MeshLambertMaterial, SpotLightHelper, Group } from 'three';
+import { BoxGeometry, Color, Mesh, MeshBasicMaterial, SpotLight, MeshPhongMaterial, CameraHelper, MeshLambertMaterial, SpotLightHelper, Group, Vector3 } from 'three';
 import loader from './loader';
+import { PhysicalMesh } from './physicalMesh';
 
-export class Bus extends Mesh {
+export class Bus extends PhysicalMesh {
 
-  public segmentLength: number = 4
+  public segmentLength: number = 3
 
   private gtlfCentralPart: Group = new Group()
   private gtlfBackPart: Group = new Group()
+  private updatePhysics: () => void
 
-  constructor(sizeX: number, sizeY: number, sizeZ: number, color: Color) {
+  constructor(sizeX: number, sizeY: number, sizeZ: number, color: Color, updatePhysics: () => void) {
     super();
-
+    this.updatePhysics = updatePhysics
 
     loader.load('content/front.glb', (gtlfLoaded => {
       gtlfLoaded.rotateY(-1.570796)
       this.add(gtlfLoaded)
-
     }))
     loader.load('content/center.glb', (gtlfLoaded => {
       gtlfLoaded.rotateY(-1.570796)
@@ -35,7 +36,7 @@ export class Bus extends Mesh {
 
 
     // change segment count
-this.segmentLength+=1
+    this.segmentLength+=1
 
     // rebuild bus
     this.calcSegments();
@@ -50,5 +51,7 @@ this.segmentLength+=1
     }
     this.gtlfBackPart.translateZ(this.segmentLength - 1)
     this.add(this.gtlfBackPart)
+
+    this.updatePhysics()
   }
 }

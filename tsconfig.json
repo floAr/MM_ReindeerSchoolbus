@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "allowJs": true,
     "lib": [
       "es2015",
       "dom"
@@ -8,7 +9,7 @@
 		"moduleResolution": "node",
     "noImplicitAny": true,
     "module": "commonjs",
-    "strict": true
+    "strict": false
   },
 	"include": [ "./src/**/*.ts" ],
 }
