@@ -4,13 +4,13 @@ import { PhysicalMesh } from './physicalMesh';
 
 export class Bus extends PhysicalMesh {
 
-  public segmentLength: number = 3
+  public segmentLength: number = 5
 
   private gtlfCentralPart: Group = new Group()
   private gtlfBackPart: Group = new Group()
   private updatePhysics: () => void
 
-  constructor(sizeX: number, sizeY: number, sizeZ: number, color: Color, updatePhysics: () => void) {
+  constructor(updatePhysics: () => void) {
     super();
     this.updatePhysics = updatePhysics
 
